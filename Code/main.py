@@ -112,7 +112,7 @@ def get_info(preset=None):
 		6:['   > Course Url: ', 'info.assignment.course'],
 		7:['   > Assignment Name: ', 'info.assignment.name'],
 		8:[' '+color.underline+'Students'+color.stop, 'u'],
-		9:['   > Username Prefix: ', 'info.students.username'],
+		9:['   > Username Template: ', 'info.students.username'],
 		10:['   > Password: ', 'info.students.password'],
 		11:['   > Ammount: ', 'info.students.ammount'],
 	}
