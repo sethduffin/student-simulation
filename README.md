@@ -8,7 +8,7 @@
 
 Run the "Start" shell script
 
-1. Info
+Info
 	- Admin
 		- Username: An admistrators username for creating students
 		- Password: That admins password
@@ -21,7 +21,7 @@ Run the "Start" shell script
 		- Password: The password set for every student
 		- Ammount: The number of students being created, deleted, or simulated
 
-2. Action
+Action
 	1. Batch Create Students
 		- Creates students based off of student template
 	2. Batch Delete Students
