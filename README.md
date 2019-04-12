@@ -10,16 +10,16 @@ Run the "Start" shell script
 
 ### Info
 	Admin
-		Username: An admistrators username for creating students
-		Password: That admins password
-		Email: An email for creating students
+	  Username: An admistrators username for creating students
+	  Password: That admins password
+	  Email: An email for creating students
 	Assignment
-		Course Url: The url of the course containing the assignment
-		Assignment Name: The name of the assignment you created during setup
+	  Course Url: The url of the course containing the assignment
+	  Assignment Name: The name of the assignment you created during setup
 	Students
-		Username Template: The template for the students usernames
-		Password: The password set for every student
-		Ammount: The number of students being created, deleted, or simulated
+	  Username Template: The template for the students usernames
+	  Password: The password set for every student
+	  Ammount: The number of students being created, deleted, or simulated
 
 ### Action
 	1. Batch Create Students
