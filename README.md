@@ -1,4 +1,4 @@
-# Student_Simulation_Script
+# Student Simulation Script
 
 ## Setup: 
 1. Upload activity zip: Revised All Question Types.zip
@@ -28,4 +28,5 @@ Run the "Start" shell script
 		- Deletes all students starting with the student username template
 	3. Simulate Student Activity
 		- Generate student attempts with randomized scores on the assignment
+	4. Quit
  
