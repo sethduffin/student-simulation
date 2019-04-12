@@ -9,14 +9,14 @@
 Run the "Start" shell script
 
 ### Info
-	- Admin
+	Admin
 		- Username: An admistrators username for creating students
 		- Password: That admins password
 		- Email: An email for creating students
-	- Assignment
+	Assignment
 		- Course Url: The url of the course containing the assignment
 		- Assignment Name: The name of the assignment you created during setup
-	- Students
+	Students
 		- Username Template: The template for the students usernames
 		- Password: The password set for every student
 		- Ammount: The number of students being created, deleted, or simulated
