@@ -74,34 +74,19 @@ def logout():
 def get_info(preset=None):
 	print(color.bold+'INFO'+color.stop)
 	global info
-	if preset == 'seth': 
-		class info:
-			class admin:
-				username = 'sd_admin'
-				password = 'testing123'
-				email = 'seth.duffin@atomicjolt.com'
-			class assignment:
-				course = 'https://atomicjolt.instructure.com/courses/2556'
-				name = 'Assignment A'
-			class students:
-				username = 'sd_fake_m'
-				password = 'testing123'
-				ammount = 30
-				keys = None
-	else:
-		class info:
-			class admin:
-				username = None
-				password = None
-				email = None
-			class assignment:
-				course = None
-				name = None
-			class students:
-				username = None
-				password = None
-				ammount = None
-				keys = None
+	class info:
+		class admin:
+			username = None
+			password = None
+			email = None
+		class assignment:
+			course = None
+			name = None
+		class students:
+			username = None
+			password = None
+			ammount = None
+			keys = None
 	
 	info_template = {
 		1:[' '+color.underline+'Admin'+color.stop,'u'],
