@@ -32,6 +32,7 @@ class color:
     stop = '\033[0m'
     bold = '\033[1m'
     underline = '\033[4m'
+
 info = {}
 
 def error(message=None):
@@ -71,35 +72,26 @@ def logout():
 		alert.accept()
 	except:
 		pass
-def get_info(preset=None):
-	print(color.bold+'INFO'+color.stop)
+def get_info():
+	from data import load_saved,save_info
 	global info
-	class info:
-		class admin:
-			username = None
-			password = None
-			email = None
-		class assignment:
-			course = None
-			name = None
-		class students:
-			username = None
-			password = None
-			ammount = None
-			keys = None
-	
+
+	info = load_saved()
+	used_save = info.admin.username != None
+
+	print()
+	os.system('clear')
+	print(color.bold+'INFO'+color.stop)
 	info_template = {
 		1:[' '+color.underline+'Admin'+color.stop,'u'],
 		2:['   > Username: ', 'info.admin.username'],
 		3:['   > Password: ', 'info.admin.password'],
 		4:['   > Email: ', 'info.admin.email'],
-		5:[' '+color.underline+'Assignment'+color.stop, 'u'],
-		6:['   > Course Url: ', 'info.assignment.course'],
-		7:['   > Assignment Name: ', 'info.assignment.name'],
-		8:[' '+color.underline+'Students'+color.stop, 'u'],
-		9:['   > Username Template: ', 'info.students.username'],
-		10:['   > Password: ', 'info.students.password'],
-		11:['   > Ammount: ', 'info.students.ammount'],
+		5:[' '+color.underline+'Courses'+color.stop+' - Number of Courses: ', 'c'],
+		6:[' '+color.underline+'Students'+color.stop, 'u'],
+		7:['   > Username Template: ', 'info.students.username'],
+		8:['   > Password: ', 'info.students.password'],
+		9:['   > Ammount: ', 'info.students.ammount'],
 	}
 
 	for num,li in info_template.items():
@@ -108,25 +100,55 @@ def get_info(preset=None):
 
 		if ref == 'u':
 			print(key)
+		elif ref == 'c':
+			if info.courses == {}:
+				info.course_count = int(input(key))
+				for i in range(info.course_count):
+					i += 1
+					print('   > Course #%s ' % i)
+					url = input('     > Url: ')
+					name = input('     > Assignment Name: ')
+					info.courses[url] = name
+			else:
+				print(key+str(info.course_count))
+				i = 1
+				for url,name in info.courses.items():
+					print('   > Course #%s ' % i)
+					print('     > Url: '+url)
+					print('     > Assignment Name: '+name)
+					i += 1
+
 		else:
 			value = eval(ref)
 			if value != None:
 				print(key+str(value))
 			elif value == None and not key == '   > Ammount: ':
 				exec(ref+'= "'+input(key)+'"')
-			if key == '   > Ammount: ':
+			elif key == '   > Ammount: ' :
 				if info.students.keys == None:
 					if info.students.ammount == None:
-						exec(ref+'='+input(key))
-					info.students.keys = list(range(1,info.students.ammount+1))
+						resp = input(key)
+						if resp == 'e':
+							key = input('   > Exact Key: ')
+							info.students.keys = [key]
+						else:
+							exec(ref+'='+resp)
+							info.students.keys = list(range(1,info.students.ammount+1))
 				else:
 					info.students.ammount = len(info.students.keys)
 					print(key+str(info.students.ammount))
 
 	#print('keys:',info.students.keys)
-			
 	print()
-def create_student(name,username,password,email,course):
+	if used_save:
+		if not input(color.yellow+'Confirm [Y/N] '+color.stop) in ['Y','y','yes','Yes']:
+			get_info()
+	else:
+		if input(color.yellow+'Do you want to save info? '+color.stop) in ['Y','y','yes','Yes']:
+			save_info(info)
+	print()
+
+def create_student(name,username,password,email,courses):
 	driver.get("https://atomicjolt.instructure.com/accounts/1")
 	driver.find('title','People').click()
 	driver.find('aria-label','Add people').click()
@@ -153,18 +175,19 @@ def create_student(name,username,password,email,course):
 	sleep(1)
 	driver.find('id','login_information').find('class','delete_pseudonym_link',True)[0].click()
 	Alert(driver).accept()
-	driver.get(course)
-	driver.find('title','People').click()
-	sleep(1)
-	driver.find('id','addUsers').click()
-	sleep(1)
-	driver.find('text+','Login ID',True)[1].click()
-	sleep(1)
-	driver.find('tag','textarea').send_keys(username)
-	driver.find('id','addpeople_next').click()
-	sleep(1)
-	driver.find('id','addpeople_next').click()
-	sleep(1)
+	for course,assignment in courses.items():
+		driver.get(course)
+		driver.find('title','People').click()
+		sleep(1)
+		driver.find('id','addUsers').click()
+		sleep(1)
+		driver.find('text+','Login ID',True)[1].click()
+		sleep(1)
+		driver.find('tag','textarea').send_keys(username)
+		driver.find('id','addpeople_next').click()
+		sleep(1)
+		driver.find('id','addpeople_next').click()
+		sleep(1)
 
 def delete_students(username):
 	driver.get("https://atomicjolt.instructure.com/accounts/1")
@@ -182,7 +205,7 @@ def delete_students(username):
 		driver.find('class','btn-primary').click()
 		sleep(1)
 
-def simulate_student(username,password,course,assignment):
+def simulate_student(username,password,courses):
 	import questions
 	driver.get('https://atomicjolt.instructure.com/')
 	login(username,password)
@@ -198,20 +221,23 @@ def simulate_student(username,password,course,assignment):
 			driver.get('https://atomicjolt.instructure.com/')
 	except Exception as e:
 		driver.implicitly_wait(implicit_wait)
-	driver.get(course)
-	driver.find('title','Assignments').click()
-	driver.find('text*',assignment).click()
-	# sleep(10)
-	driver.switch_to.frame(1)
-	driver.implicitly_wait(20)
-	driver.find('class','start-test-btn').click()
-	driver.implicitly_wait(implicit_wait)
-	sleep(1)
-	questions.simulate()
-	driver.switch_to.default_content()
+	for course,assignment in courses.items():
+		driver.get(course)
+		driver.find('title','Assignments').click()
+		driver.find('text*',assignment).click()
+		# sleep(10)
+		driver.switch_to.frame(1)
+		driver.implicitly_wait(20)
+		driver.find('class','start-test-btn').click()
+		driver.implicitly_wait(implicit_wait)
+		sleep(1)
+		questions.simulate()
+		driver.switch_to.default_content()
 	logout()
 
 def get_action():
+	print()
+	os.system('clear')
 	print(color.bold+'ACTION'+color.stop)
 	print(' 1) '+color.underline+'Batch Create Students'+color.stop)
 	print('     > Creates students with names like %s[1]' % (info.students.username))
@@ -221,10 +247,13 @@ def get_action():
 	print('     > Generate student attempts')
 	print(' 4) '+color.underline+'Quit'+color.stop)
 
-	choice = input('Action #: ')
-	if not choice:
-		quit()
-	choice = int(choice)
+	print()
+
+	try:
+		choice = int(input(color.yellow+'Action #: '+color.stop))
+	except:
+		quit()	
+
 	if choice == 2:
 		print(color.red+'Are you sure? This will delete every user starting with:%s \n%s%s' % (color.yellow,info.students.username,color.stop))
 		if not input('[Y/N]: ') in ['Y','Yes','y','yes']:
@@ -258,8 +287,10 @@ def run(choice):
 	driver.quit()
 
 def do(choice):
+	print()
+	os.system('clear')
 	if choice == 1:
-		print('Creating Students (%s min)' % (rate.create*info.students.ammount))
+		print('Creating Students (%s min)' % (rate.create*info.students.ammount*info.course_count))
 		bar(0,info.students.ammount)
 		driver.get("https://atomicjolt.instructure.com/login/canvas")
 		login(info.admin.username,info.admin.password)
@@ -269,7 +300,7 @@ def do(choice):
 			pw = info.students.password
 			e = info.admin.email.split('@')
 			em = e[0]+'+'+un+'@'+e[1]
-			co = info.assignment.course
+			co = info.courses
 			create_student(na,un,pw,em,co)
 			bar(i+1,info.students.ammount)
 		logout()
@@ -284,14 +315,13 @@ def do(choice):
 		logout()
 
 	if choice == 3:
-		print('Simulating Student Activity (%s min)' % (rate.simulate*info.students.ammount))
+		print('Simulating Student Activity (%s min)' % (rate.simulate*info.students.ammount*info.course_count))
 		bar(0,info.students.ammount)
 		for i,num in enumerate(info.students.keys):
 			un = info.students.username+'['+str(num)+']'
 			pw = info.students.password
-			co = info.assignment.course
-			am = info.assignment.name
-			simulate_student(un,pw,co,am)
+			co = info.courses
+			simulate_student(un,pw,co)
 			bar(i+1,info.students.ammount)
 		print()
 		print()

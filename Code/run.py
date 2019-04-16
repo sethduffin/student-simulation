@@ -1,6 +1,5 @@
 from main import *
 
-os.system('clear')
 get_info()
 
 while True:
