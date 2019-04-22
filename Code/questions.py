@@ -5,21 +5,33 @@ page = None
 
 def simulate():
 	total = list(range(1,question_count+1))
-	t = randint(0,question_count)
-	f = question_count - t
+	c = randint(0,question_count)
+	i = question_count-c
 
 	form = {}
 
-	for i in range(t):
-		num = choice(total)
-		total.remove(num)
-		form[num] = True
-	for i in range(f):
-		num = choice(total)
-		total.remove(num)
-		form[num] = False
+	partials = [3,4,13,15,16,17,18,19,20,21,22,23,24,25]
+
+	for letter in ['c','i']:
+		for key in range(eval(letter)):
+			num = choice(total)
+			total.remove(num)
+			if num in partials and choice([True, False]):
+				form[num] = 'p'
+			else:
+				form[num] = letter
 
 	form = dict(sorted(form.items()))
+
+	# for key,value in form.items():
+	# 	if value == 'c':
+	# 		print(color.green+str(key)+': '+value+color.stop)
+	# 	if value == 'p':
+	# 		print(color.blue+str(key)+': '+value+color.stop)
+	# 	if value == 'i':
+	# 		print(color.red+str(key)+': '+value+color.stop)
+	# input()
+	# return
 
 	take(form)
 
@@ -57,127 +69,136 @@ def take(questions):
 	driver.implicitly_wait(implicit_wait)
 
 class attempts:
-	def q1(correct):
+	def q1(state):
 		try:
-			if correct:
+			if state == 'c':
 				page.find('text+','Violet').click()
-			if not correct:
+			elif state == 'i':
 				page.find('text+','Blue').click()
 		except:
 			error()
 
-	def q2(correct):
-		if correct:
+	def q2(state):
+		if state == 'c':
 			page.find('text~','Red').click()
-		if not correct:
+		elif state == 'i':
 			page.find('text+','Green').click()
 
-	def q3(correct):
-		if correct:
+	def q3(state):
+		if state == 'c':
 			page.find('text+','Baton Rouge, LA').click()
 			page.find('text+','Olympia, WA').click()
-		if not correct:
+		elif state == 'p':
+			page.find('text+','Houston, TX').click()
+			page.find('text+','Olympia, WA').click()
+		elif state == 'i':
 			page.find('text+','Houston, TX').click()
 
-	def q4(correct):
-		if correct:
+	def q4(state):
+		if state == 'c':
 			tof = [1,0,1]
-		if not correct:
+		elif state == 'p':
+			tof = [1,1,1]
+		elif state == 'i':
 			tof = [0,1,0]
 		for i,box in enumerate(page.find('class','lrn_choicematrix_type_table').find('tag','tbody',True)):
 			box.find('data-colno',str(tof[i])).click()
 
-	def q5(correct):
-		if correct:
-			math_box('1','3+3+4x')
-		if not correct:
+	def q5(state):
+		if state == 'c':
+			math_box('1','3+2+4x')
+		elif state == 'i':
 			math_box('1','8+2+18x')
 
-	def q6(correct):
-		if correct:
+	def q6(state):
+		if state == 'c':
 			math_box('77','m')
 			math_box('83','2')
-		if not correct:
+		elif state == 'i':
 			math_box('77','t')
 			math_box('83','4')
 
-	def q7(correct):
-		if correct:
+	def q7(state):
+		if state == 'c':
 			math_box("95","y",True)
 			action.key_down(Keys.SHIFT).send_keys("6").key_up(Keys.SHIFT).do()
 			sleep(0.5)
 			action.send_keys("2").do()
 			math_box("95","")
 			math_box("100","3x")
-		if not correct:
+		elif state == 'i':
 			math_box("95","7t")
 			math_box("100","4w")
 
-	def q8(correct):
-		if correct:
+	def q8(state):
+		if state == 'c':
 			math_box("113",'40')
-		if not correct:
+		elif state == 'i':
 			math_box("113",'20')
 
-	def q9(correct):
-		if correct:
-			math_box("121","87.7° F")
-		if not correct:
-			math_box("121","90° F")
+	def q9(state):
+		if state == 'c':
+			math_box("121","87.7")
+		elif state == 'i':
+			math_box("121","90")
 
-	def q10(correct):
-		if correct:
+	def q10(state):
+		if state == 'c':
 			math_box("127","3")
 			math_box("132","2")
-		if not correct:
+		elif state == 'i':
 			math_box("127","4")
 			math_box("132","2")
 
-	def q11(correct):
-		if correct:
+	def q11(state):
+		if state == 'c':
 			math_box("134","0.005km")
-		if not correct:
+		elif state == 'i':
 			math_box("134","1.3km")
 
-	def q12(correct):
+	def q12(state):
 		ids = [187,191,195,199]
-		if correct:
+		if state == 'c':
 			values = [9,7,4,6]
-		if not correct:
+		elif state == 'i':
 			values = [3,3,3,3]
 		for i,val in enumerate(values):
 			math_box(str(ids[i]),str(val))
 
-	def q13(correct):
+	def q13(state):
 		ids = [280,283,277]
 		driver.find("class","lrn_float_element_container").delete()
-		if correct:
+		if state == 'c':
 			values = ["40","7.81±0.01","50"]
-		if not correct:
+		elif state == 'p':
+			values = ["12","7.81±0.01","50"]
+		elif state == 'i':
 			values = ["12","15","36"]
 		for i,val in enumerate(values):
 			math_box(str(ids[i]),str(val))
 
-	def q14(correct):
+	def q14(state):
 		ids = [296,308]
-		if correct:
+		if state == 'c':
 			values = ["a","20"]
-		if not correct:
+		elif state == 'i':
 			values = ["18","13"]
 		for i,val in enumerate(values):
 			math_box(str(ids[i]),str(val))
 
-	def q15(correct):
-		if correct:
+	def q15(state):
+		if state == 'c':
 			order = [3,0,2,1]
-		if not correct:
+		elif state == 'p':
+			order = [3,0,1,2]
+		elif state == 'i':
 			order = [2,1,0,3]
 		for i,val in enumerate(order):
 			page.find('class','lrn_possibilityList').find('data-index',str(val)).click()
 			page.find('class','lrn_response_input').find('data-inputid',str(i)).click()
 
-	def q16(correct):
-		if correct:
+	def q16(state):
+		if state == 'c':
 			order = [
 			"North America",
 			"South America",
@@ -187,7 +208,17 @@ class attempts:
 			"Europe",
 			"Antartica",
 			]
-		if not correct:
+		elif state == 'p':
+			order = [
+			"North America",
+			"South America",
+			"Asia",
+			"Africa",
+			"Europe",
+			"Antartica",
+			"Australia",
+			]
+		elif state == 'i':
 			order = [
 			"Antartica",
 			"North America",
@@ -201,11 +232,13 @@ class attempts:
 			page.find('text~',str(val)).click()
 			page.find('class','lrn_response_input').find('data-inputid',str(i)).click()
 
-	def q17(correct):
+	def q17(state):
 		try:
-			if correct:
+			if state == 'c':
 				order = [1,4,9]
-			if not correct:
+			elif state == 'p':
+				order = [1,9,4]
+			elif state == 'i':
 				order = [9,1,4]
 			for i,val in enumerate(order):
 				page.find('class','lrn_possibilityList').find('text~',str(val)).click()
@@ -213,8 +246,8 @@ class attempts:
 		except Exception as e:
 			error(e)
 
-	def q18(correct):
-		if correct:
+	def q18(state):
+		if state == 'c':
 			values = [
 			"backwaters",
 			"Western",
@@ -222,7 +255,15 @@ class attempts:
 			"primitive",
 			"digital watches"
 			]
-		if not correct:
+		elif state == 'p':
+			values = [
+			"backwaters",
+			"Western",
+			"primitive",
+			"ninety-eight",
+			"digital watches"
+			]
+		elif state == 'i':
 			values = [
 			"seth",
 			"is",
@@ -233,14 +274,20 @@ class attempts:
 		for i,val in enumerate(values):
 			page.find('data-inputid',str(i)).send_keys(val)
 
-	def q19(correct):
-		if correct:
+	def q19(state):
+		if state == 'c':
 			values = [
 			"Nevada",
 			"South Dakota",
 			"Alabama",
 			]
-		if not correct:
+		elif state == 'p':
+			values = [
+			"Nevada",
+			"North Dakota",
+			"Alabama",
+			]
+		elif state == 'i':
 			values = [
 			"Utah",
 			"North Dakota",
@@ -249,8 +296,8 @@ class attempts:
 		for i,val in enumerate(values):
 			page.find('data-inputid',str(i)).find("text~",val).click()
 
-	def q20(correct):
-		if correct:
+	def q20(state):
+		if state == 'c':
 			order = [
 			"F. Scott Fitzgerald",
 			"Mark Twain",
@@ -259,7 +306,16 @@ class attempts:
 			"Jane Austen",
 			"C.S. Lewis",
 			]
-		if not correct:
+		elif state == 'p':
+			order = [
+			"F. Scott Fitzgerald",
+			"Mark Twain",
+			"C.S. Lewis",
+			"Herman Melville",
+			"C.S. Lewis",
+			"Jane Austen",
+			]
+		elif state == 'i':
 			order = [
 			"C.S. Lewis",
 			"F. Scott Fitzgerald",
@@ -272,54 +328,63 @@ class attempts:
 			page.find('class','lrn_possibilityList').find('text~',str(val)).click()
 			page.find('class','lrn_response_input').find('data-inputid',str(i)).click()
 
-	def q21(correct):
-		if correct:
+	def q21(state):
+		if state == 'c':
 			order = [2,0,1,3]
-		if not correct:
+		elif state == 'p':
+			order = [3,0,1,2]
+		elif state == 'i':
 			order = [3,1,2,0]
 		for i,val in enumerate(order):
 			page.find('class','lrn-dragdrop-container').find('data-response-index',str(val)).click()
 			page.find('class','lrn_sort_block',True)[i].click()
 
-	def q22(correct):
-		if correct:
+	def q22(state):
+		if state == 'c':
 			order = [4,2,1,0,3]
-		if not correct:
+		elif state == 'p':
+			order = [2,4,1,0,3]
+		elif state == 'i':
 			order = [0,1,2,3,4]
 		for i,val in enumerate(order):
 			page.find('class','lrn-dragdrop-container').find('data-response-index',str(val)).click()
 			page.find('class','lrn_sort_block',True)[i].click()
 
-	def q23(correct):
-		if correct:
+	def q23(state):
+		if state == 'c':
 			order = [3,0,1,7,6,4,2,5]
-		if not correct:
+		elif state == 'p':
+			order = [7,0,1,3,6,4,2,5]
+		elif state == 'i':
 			order = [0,1,2,3,4,5,6,7]
 		for i,val in enumerate(order):
 			page.find('class','lrn-dragdrop-container').find('data-response-index',str(val)).click()
 			page.find('class','lrn_sortable',True)[i].click()
 
-	# def q24(correct):
-	# 	if correct:
+	# def q24(state):
+	# 	if state == 'c':
 	# 		page.find('class','lrn_start_recording').click()
-	# 	if not correct:
+	# 	elif state == 'i':
 	# 		pass
 
-	# def q25(correct):
-	# 	if correct:
+	# def q25(state):
+	# 	if state == 'c':
 	# 		page.find('class','lrn_paintable').click()
-	# 	if not correct:
+	# 	elif state == 'i':
 	# 		pass
 
-	def q24(correct):
-		if correct:
+	def q24(state):
+		if state == 'c':
 			for elem in page.find("data-row","1",True):
 				elem.click()
-		if not correct:
+		elif state == 'p':
 			page.find("data-row","1",True)[0].click()
+			page.find("data-row","1",True)[1].click()
+		elif state == 'i':
+			page.find("data-row","2",True)[0].click()
 
-	def q25(correct):
-		if correct:
+	def q25(state):
+		if state == 'c':
 			words = [
 				'best', 
 				'worst',
@@ -335,17 +400,28 @@ class attempts:
 				'good',
 				'evil',
 			]
-		if not correct:
+		elif state == 'p':
+			words = [
+				'best', 
+				'worst',
+				'wisdom',
+				'Light',
+				'Darkness',
+				'hope',
+				'far',
+				'evil',
+			]
+		elif state == 'i':
 			words = ['age','of','Heaven']
 		for word in words:
 			driver.find('class','lrn_tokenhighlight_text').find('text~',word,True)[0].click()
 
-	# def q28(correct):
+	# def q28(state):
 	# 	return
 	# 	try:
-	# 		if correct:
+	# 		if state == 'c':
 	# 			values = [8,9,10]
-	# 		if not correct:
+	# 		elif state == 'i':
 	# 			values = [4,3,2]
 	# 		for i,val in enumerate(values):
 	# 			circle = page.find('class','line-hover-circle',True)[i]
@@ -357,17 +433,17 @@ class attempts:
 	# 	except:
 	# 		error()
 
-	# def q29(correct):
+	# def q29(state):
 	# 	return
-	# 	if correct:
+	# 	if state == 'c':
 	# 		pass
-	# 	if not correct:
+	# 	elif state == 'i':
 	# 		pass
 
-	def q26(correct):
-		if correct:
+	def q26(state):
+		if state == 'c':
 			page.find('tag','input').send_keys('7')
-		if not correct:
+		elif state == 'i':
 			page.find('tag','input').send_keys('50')
 
 

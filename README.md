@@ -21,6 +21,9 @@ Run the "Start" shell script
 	  Password: The password set for every student
 	  Ammount: The number of students being created, deleted, or simulated
 
+### Save
+	When you input information for simulating a set of students, you can choose to save the data with a save key. This makes the process run faster.
+
 ### Action
 	1. Batch Create Students
 		- Creates students based off of student template
