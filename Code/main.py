@@ -37,10 +37,13 @@ info = {}
 
 def error(message=None):
 	print()
+	print()
 	print("%s%s: %s, %s:%s%s" % (color.red,sys.exc_info()[0].__name__, sys.exc_info()[1], os.path.basename(sys.exc_info()[2].tb_frame.f_code.co_filename), sys.exc_info()[2].tb_lineno,color.stop))
 	if message:
 		print(color.red+message+color.stop)
-	input('UGH')
+	print()
+	print()
+	input(' -- Enter --')
 	driver.quit()
 	quit()
 
@@ -66,7 +69,7 @@ def login(username,password):
 def logout():
 	driver.find('id','global_nav_profile_link').click()
 	sleep(0.5)
-	driver.find('xpath','//*[@id="nav-tray-portal"]/span/span/div/div/div/div/span/form/button').click()
+	driver.find('xpath','/html/body/div[3]/span/span/div/div/div/div/div/span/form/button').click()
 	try:
 		alert = driver.switch_to.alert
 		alert.accept()
@@ -150,11 +153,11 @@ def get_info():
 
 def create_student(name,username,password,email,courses):
 	driver.get("https://atomicjolt.instructure.com/accounts/1")
-	driver.find('title','People').click()
+	driver.find('text','People').click()
 	driver.find('aria-label','Add people').click()
-	driver.find('tag','input')[2].send(name)
-	driver.find('tag','input')[5].send(email)
-	driver.find('tag','input')[6].send(username)
+	driver.find('xpath','/html/body/span/span/form/div[2]/fieldset/span/span/span/span/span/span/span[1]/label/span/span[1]/span[2]/span/input').send(name)
+	driver.find('xpath','/html/body/span[1]/span/form/div[2]/fieldset/span/span/span/span/span/span/span[4]/label/span/span/span[2]/span/input').send(email)
+	driver.find('xpath','/html/body/span[1]/span/form/div[2]/fieldset/span/span/span/span/span/span/span[5]/label/span/span/span[2]/span/input').send(username)
 	driver.find('text+','Email the user about this account creation').click()
 	driver.find('text+','Add User').up().click()
 	sleep(0.5)
@@ -177,7 +180,7 @@ def create_student(name,username,password,email,courses):
 	Alert(driver).accept()
 	for course,assignment in courses.items():
 		driver.get(course)
-		driver.find('title','People').click()
+		driver.find('text','People').click()
 		sleep(1)
 		driver.find('id','addUsers').click()
 		sleep(1)
@@ -191,7 +194,7 @@ def create_student(name,username,password,email,courses):
 
 def delete_students(username):
 	driver.get("https://atomicjolt.instructure.com/accounts/1")
-	driver.find('title','People').click()
+	driver.find('text','People').click()
 	while True:
 		driver.find('placeholder','Search people...').send_keys(username)
 		time.sleep(2)
@@ -223,12 +226,15 @@ def simulate_student(username,password,courses):
 		driver.implicitly_wait(implicit_wait)
 	for course,assignment in courses.items():
 		driver.get(course)
-		driver.find('title','Assignments').click()
-		driver.find('text*',assignment).click()
+		driver.find('text','Assignments').click()
+		driver.find('text*',assignment,True)[0].click()
 		# sleep(10)
 		driver.switch_to.frame(1)
-		driver.implicitly_wait(20)
-		driver.find('class','start-test-btn').click()
+		driver.implicitly_wait(10)
+		try:
+			driver.find('class','start-test-btn').click()
+		except:
+			pass
 		driver.implicitly_wait(implicit_wait)
 		sleep(1)
 		questions.simulate()

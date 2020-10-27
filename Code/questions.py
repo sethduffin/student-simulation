@@ -36,32 +36,44 @@ def simulate():
 	take(form)
 
 def math_box(key,text,hold=False):
+	temp_action = ActionChains(driver)
 	math = page.find("mathquill-block-id",key)
 	math.click()
-	action.send_keys(text).do()
+	temp_action.send_keys(text).perform()
+	temp_action.reset_actions()
 	if not hold:
 		sleep(0.3)
-		page.find('class','lrn_stimulus_content',True)[0].click()
+		try:
+			page.find('class','lrn_stimulus_content',True)[0].click()
+		except:
+			driver.find('tag','body').click()
 	sleep(0.3)
 
 def take(questions):
 	for question,value in questions.items():
+		temp_action = ActionChains(driver)
 		if driver.find('class','current-item-pos').text != str(question):
 			item_num = str(question-1)
-			page_button = driver.find('class','slides-vertical-pagination').find('xpath','./li[@data-index="'+item_num+'"]').find('tag','button')
-			action.move_to_element(page_button).do()
+			page_button = driver.find('class','slides-vertical-pagination').find('xpath','./li[@data-index="'+item_num+'"]').find('tag','a')
+			temp_action.move_to_element(page_button).do()
 			page_button.click()
 		sleep(0.2)
 		global page
-		page = driver.find("xpath","//*[@id=\"learnosity_assess\"]/div/div[3]/div[1]/div/div[2]/div["+str(question)+"]")
-		eval('attempts.q'+str(question))(value)
+		page = driver.find("xpath","//*[@class=\"slides-control\"]/div["+str(question)+"]")
+		try:
+			eval('attempts.q'+str(question))(value)
+		except Exception as e:
+			print()
+			print('While answering question %s' % (question))
+			error()
 		sleep(0.2)
 
 	question = question_count
 	if driver.find('class','current-item-pos').text != str(question):
+		temp_action = ActionChains(driver)
 		item_num = str(question-1)
-		page_button = driver.find('class','slides-vertical-pagination').find('xpath','./li[@data-index="'+item_num+'"]').find('tag','button')
-		action.move_to_element(page_button).do()
+		page_button = driver.find('class','slides-vertical-pagination').find('xpath','./li[@data-index="'+item_num+'"]').find('tag','a')
+		temp_action.move_to_element(page_button).do()
 		page_button.click()
 	driver.find('class','test-submit').click()
 	driver.implicitly_wait(15)
@@ -72,27 +84,27 @@ class attempts:
 	def q1(state):
 		try:
 			if state == 'c':
-				page.find('text+','Violet').click()
+				page.find('text+','Violet')[0].click()
 			elif state == 'i':
-				page.find('text+','Blue').click()
+				page.find('text+','Blue')[0].click()
 		except:
 			error()
 
 	def q2(state):
 		if state == 'c':
-			page.find('text~','Red').click()
+			page.find('text~','Red')[0].click()
 		elif state == 'i':
-			page.find('text+','Green').click()
+			page.find('text+','Green')[0].click()
 
 	def q3(state):
 		if state == 'c':
-			page.find('text+','Baton Rouge, LA').click()
-			page.find('text+','Olympia, WA').click()
+			page.find('text+','Baton Rouge, LA')[0].click()
+			page.find('text+','Olympia, WA')[0].click()
 		elif state == 'p':
-			page.find('text+','Houston, TX').click()
-			page.find('text+','Olympia, WA').click()
+			page.find('text+','Houston, TX')[0].click()
+			page.find('text+','Olympia, WA')[0].click()
 		elif state == 'i':
-			page.find('text+','Houston, TX').click()
+			page.find('text+','Houston, TX')[0].click()
 
 	def q4(state):
 		if state == 'c':
@@ -101,7 +113,7 @@ class attempts:
 			tof = [1,1,1]
 		elif state == 'i':
 			tof = [0,1,0]
-		for i,box in enumerate(page.find('class','lrn_choicematrix_type_table').find('tag','tbody',True)):
+		for i,box in enumerate(page.find('class','lrn_choicematrix_type_table').find('tag','tbody').find('tag','tr')):
 			box.find('data-colno',str(tof[i])).click()
 
 	def q5(state):
@@ -166,7 +178,7 @@ class attempts:
 			math_box(str(ids[i]),str(val))
 
 	def q13(state):
-		ids = [280,283,277]
+		ids = [274,277,271]
 		driver.find("class","lrn_float_element_container").delete()
 		if state == 'c':
 			values = ["40","7.81±0.01","50"]
@@ -178,7 +190,7 @@ class attempts:
 			math_box(str(ids[i]),str(val))
 
 	def q14(state):
-		ids = [296,308]
+		ids = [290,302]
 		if state == 'c':
 			values = ["a","20"]
 		elif state == 'i':
@@ -194,8 +206,8 @@ class attempts:
 		elif state == 'i':
 			order = [2,1,0,3]
 		for i,val in enumerate(order):
-			page.find('class','lrn_possibilityList').find('data-index',str(val)).click()
-			page.find('class','lrn_response_input').find('data-inputid',str(i)).click()
+			page.find('class','lrn_possibilityList').find('data-index',str(val),True)[0].click()
+			page.find('class','lrn_response_input').find('data-inputid',str(i),True)[0].click()
 
 	def q16(state):
 		if state == 'c':
@@ -229,8 +241,8 @@ class attempts:
 			"Africa",
 			]
 		for i,val in enumerate(order):
-			page.find('text~',str(val)).click()
-			page.find('class','lrn_response_input').find('data-inputid',str(i)).click()
+			page.find('text~',str(val),True)[0].click()
+			page.find('class','lrn_response_input').find('data-inputid',str(i),True)[0].click()
 
 	def q17(state):
 		try:
@@ -241,8 +253,8 @@ class attempts:
 			elif state == 'i':
 				order = [9,1,4]
 			for i,val in enumerate(order):
-				page.find('class','lrn_possibilityList').find('text~',str(val)).click()
-				page.find('class','lrn_response_input').find('data-inputid',str(i)).click()
+				page.find('class','lrn_possibilityList').find('text~',str(val),True)[0].click()
+				page.find('class','lrn_response_input').find('data-inputid',str(i),True)[0].click()
 		except Exception as e:
 			error(e)
 
@@ -265,11 +277,11 @@ class attempts:
 			]
 		elif state == 'i':
 			values = [
-			"seth",
-			"is",
-			"really",
-			"super",
-			"cool"
+			"orange",
+			"blue",
+			"pink",
+			"black",
+			"green"
 			]
 		for i,val in enumerate(values):
 			page.find('data-inputid',str(i)).send_keys(val)
@@ -294,7 +306,7 @@ class attempts:
 			"Georgia",
 			]
 		for i,val in enumerate(values):
-			page.find('data-inputid',str(i)).find("text~",val).click()
+			page.find('data-inputid',str(i)).find("text~",val,True)[0].click()
 
 	def q20(state):
 		if state == 'c':
@@ -325,8 +337,8 @@ class attempts:
 			"Jane Austen",
 			]
 		for i,val in enumerate(order):
-			page.find('class','lrn_possibilityList').find('text~',str(val)).click()
-			page.find('class','lrn_response_input').find('data-inputid',str(i)).click()
+			page.find('class','lrn_possibilityList').find('text~',str(val),True)[0].click()
+			page.find('class','lrn_response_input').find('data-inputid',str(i),True)[0].click()
 
 	def q21(state):
 		if state == 'c':
@@ -336,7 +348,7 @@ class attempts:
 		elif state == 'i':
 			order = [3,1,2,0]
 		for i,val in enumerate(order):
-			page.find('class','lrn-dragdrop-container').find('data-response-index',str(val)).click()
+			page.find('class','lrn-dragdrop-container').find('data-response-index',str(val),True)[0].click()
 			page.find('class','lrn_sort_block',True)[i].click()
 
 	def q22(state):

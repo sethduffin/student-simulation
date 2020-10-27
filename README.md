@@ -6,7 +6,7 @@
 
 ## Running:
 
-Run the "Start" shell script
+Execute the "run" shell script
 
 ### Info
 	Admin
@@ -22,7 +22,7 @@ Run the "Start" shell script
 	  Ammount: The number of students being created, deleted, or simulated
 
 ### Save
-	When you input information for simulating a set of students, you can choose to save the data with a save key. This makes the process run faster.
+	When you input information for simulating a set of students, you can choose to save the data. This makes the process run faster.
 
 ### Action
 	1. Batch Create Students
